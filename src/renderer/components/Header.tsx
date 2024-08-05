@@ -4,7 +4,7 @@ import help from '../../../assets/icons/help.svg';
 
 function Header() {
   return (
-    <div className="mt-4 flex flex-1 grid-cols-3 justify-between px-12">
+    <div className="mt-4 flex flex-1 grid-cols-3 justify-between px-12 max-h-20">
       <a
         href="https://github.com/TUMFARSynchrony"
         target="_blank"

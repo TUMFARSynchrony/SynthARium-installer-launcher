@@ -27,6 +27,10 @@ export declare interface IOutputLogProps {
   name: string;
 }
 
+export declare interface IAutoUpdaterProps {
+  logs: string;
+}
+
 export declare interface IStepProps {
   key: string;
   contents: IContents;

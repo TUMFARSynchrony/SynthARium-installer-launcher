@@ -193,8 +193,8 @@ function Contents(props: IContentsProps) {
                     (isOperationLoading
                       ? 'cursor-progress'
                       : status
-                      ? 'cursor-pointer'
-                      : 'cursor-not-allowed')
+                        ? 'cursor-pointer'
+                        : 'cursor-not-allowed')
                   }
                   onClick={nextButtonClick}
                   disabled={!!isOperationLoading || !status}
@@ -210,8 +210,8 @@ function Contents(props: IContentsProps) {
                       (isOperationLoading
                         ? 'cursor-progress'
                         : status
-                        ? 'cursor-pointer'
-                        : 'cursor-not-allowed')
+                          ? 'cursor-pointer'
+                          : 'cursor-not-allowed')
                     }
                     onClick={() => {}}
                     disabled={!!isOperationLoading || !status}

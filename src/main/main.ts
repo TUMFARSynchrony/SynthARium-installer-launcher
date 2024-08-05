@@ -16,17 +16,6 @@ import { IResult } from '../constants/interfaces';
 import { handleMessage } from './handle.message';
 
 dotenv.config(); // Load environment variables from .env file
-console.log('process.env.GH_TOKEN', process.env.GH_TOKEN);
-console.log('process.env.GITHUB_TOKEN', process.env.GITHUB_TOKEN);
-console.log('process.env.GH_TOKEN_2', process.env.GH_TOKEN_2);
-
-class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-}
 
 initializeAppDataPath();
 initializeAndReadConfigFile();
@@ -121,12 +110,61 @@ const createWindow = async () => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  // new AppUpdater();
+  // Object.defineProperty(app, 'isPackaged', {
+  //   get() {
+  //     return true;
+  //   },
+  // });
+  log.transports.file.level = 'info';
+  autoUpdater.logger = log;
+  // autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml');
+  autoUpdater.checkForUpdatesAndNotify();
 };
-
 /**
  * Add event listeners...
  */
+function sendStatusToWindow(text: string, updateAvailable?: boolean) {
+  log.info(text);
+  mainWindow?.webContents.send('syntharium', {
+    topic: topics.autoUpdater,
+    data: {
+      logs: text,
+      updateAvailable,
+    },
+  });
+}
+
+autoUpdater.on('checking-for-update', () => {
+  sendStatusToWindow('Checking for update...');
+});
+
+autoUpdater.on('update-available', (info) => {
+  console.log('info', info);
+  sendStatusToWindow('Update available.', true);
+});
+
+autoUpdater.on('update-not-available', (info) => {
+  console.log('info', info);
+  sendStatusToWindow('Update not available.', false);
+});
+
+autoUpdater.on('error', (err) => {
+  console.log('err', err);
+  sendStatusToWindow(`Error in auto-updater. ${err}`);
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+  let logMessage = `Download speed: ${progressObj.bytesPerSecond}`;
+  logMessage = `${logMessage} - Downloaded ${progressObj.percent}%`;
+  logMessage = `${logMessage} (${progressObj.transferred}/${progressObj.total})`;
+  sendStatusToWindow(logMessage);
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+  console.log('info', info);
+  sendStatusToWindow('Update downloaded');
+});
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even

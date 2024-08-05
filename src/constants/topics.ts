@@ -6,6 +6,7 @@ enum topics {
   'checkServiceStatuses' = 'checkServiceStatuses',
   'checkLauncherStatuses' = 'checkLauncherStatuses',
   'liveLog' = 'liveLog',
+  'autoUpdater' = 'autoUpdater',
 }
 
 export default topics;

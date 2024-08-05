@@ -18,6 +18,7 @@ export default function OutputLog(props: IOutputLogProps) {
           <div className="relative w-full">
             <textarea
               rows={rows}
+              cols={10}
               readOnly
               className="peer h-full min-h-[80px] w-full !resize-none  rounded-[7px] border border-gray-700 px-3 py-2.5 font-sans text-sm font-normal text-gray-700 outline outline-0 transition-all"
               value={value}

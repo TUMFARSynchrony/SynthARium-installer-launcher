@@ -97,7 +97,7 @@ export default function Launcher() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hostUrl, logs, showLogs]);
   return (
-    <div className="flex-grow">
+    <div className="flex h-screen">
       {isPageLoading ? (
         <h2>Loading...</h2>
       ) : (

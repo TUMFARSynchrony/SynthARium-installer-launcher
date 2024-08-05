@@ -229,7 +229,8 @@
             "x64"
           ]
         }
-      ]
+      ],
+      "verifyUpdateCodeSignature": false
     },
     "linux": {
       "target": [

@@ -4,32 +4,24 @@ import { stepNames } from '../../constants/stepNames';
 import topics from '../../constants/topics';
 import sectionDescription from '../statics/section.description.json';
 import { IMessage } from '../interfaces/message';
+import AutoUpdater from '../components/AutoUpdater';
 
 function Installer() {
   const { ipcRenderer } = window.electron;
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [isOperationLoading, setIsOperationLoading] = useState(false);
-
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [autoUpdateLogs, setAutoUpdateLogs] = useState('');
   const [step, setStep] = useState(stepNames.python);
 
   const sendInstallCommand = (type: any, data?: any) => {
     setIsOperationLoading(true);
-    ipcRenderer.sendMessage(
-      'syntharium',
-      'runInstallCommand',
-      type,
-      data,
-    );
+    ipcRenderer.sendMessage('syntharium', 'runInstallCommand', type, data);
   };
 
   const sendValidatorCommand = (type: any, data?: any) => {
     setIsOperationLoading(true);
-    ipcRenderer.sendMessage(
-      'syntharium',
-      'runValidatorCommand',
-      type,
-      data,
-    );
+    ipcRenderer.sendMessage('syntharium', 'runValidatorCommand', type, data);
   };
 
   const sendTestCommand = (type: any) => {
@@ -225,6 +217,7 @@ function Installer() {
     setup();
     ipcRenderer.on('syntharium', (message: any): void => {
       const convertedMessage = message as IMessage;
+      console.log('convertedMessage', convertedMessage);
       if (!convertedMessage) {
         return;
       }
@@ -257,14 +250,25 @@ function Installer() {
         contents[service].msg = convertedMessage.msg;
         contents[service].status = convertedMessage.data;
         setIsOperationLoading(false);
+      } else if (convertedMessage.topic === topics.autoUpdater) {
+        setAutoUpdateLogs(`${convertedMessage.data.logs}\n${autoUpdateLogs}`);
+        if (convertedMessage.data.updateAvailable) {
+          setUpdateAvailable(true);
+        }
       }
       setContents(contents);
       setIsPageLoading(false);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [updateAvailable, autoUpdateLogs]);
+  if (updateAvailable) {
+    return (
+      <div className="flex h-screen flex-col justify-normal">
+        <AutoUpdater logs={autoUpdateLogs} />
+      </div>
+    );
+  }
   return (
-    <div className="flex-grow">
+    <div className="flex h-screen">
       <Body
         contents={contents}
         step={step}
