@@ -1,0 +1,56 @@
+{
+    "python": {
+        "stepName": "Test Python",
+        "buttonName": "Check Python Version",
+        "type": "test",
+        "description": "This step verifies if Python (currently tested versions: version > 3.10.3 and < 3.12) is installed on your computer. Python is required for running the experimental hub's backend application. Click the \"Test\" button below. If not detected, installation instructions will be provided."
+    },
+    "node": {
+        "stepName": "Test Node",
+        "buttonName": "Check Node Version",
+        "type": "test",
+        "description": "This step verifies if Node.js (currently tested versions are > v16.0.0) is installed on your computer. Node.js is required for running the experimental hub's frontend application. Click the \"Test\" button below. If not detected, installation instructions will be provided."
+    },
+    "git": {
+        "stepName": "Test Git",
+        "buttonName": "Check Git Version",
+        "type": "test",
+        "description": "This step verifies if Git is installed on your computer. Git is crucial for cloning the project repository. Click the \"Test\" button below. If not detected, installation instructions will be provided."
+    },
+    "ngrok": {
+        "stepName": "Configure Ngrok",
+        "buttonName": "Set ngrok token",
+        "type": "input",
+        "description": "Ngrok is optional but useful for exposing your local application to the global network. If you wish to use Ngrok, enter your Ngrok auth token in the input section below and click \"Submit.\" Instructions on obtaining the auth token will be provided."
+    },
+    "openAi": {
+        "stepName": "Configure OpenAi",
+        "buttonName": "Set OpenAI token",
+        "type": "input",
+        "description": "Ngrok is optional but useful for exposing your local application to the global network. If you wish to use Ngrok, enter your Ngrok auth token in the input section below and click \"Submit.\" Instructions on obtaining the auth token will be provided."
+    },
+    "openFace": {
+        "stepName": "Configure OpenFace",
+        "buttonName": "Open Face",
+        "type": "install",
+        "description": "OpenFace is optional but useful for exposing your local application to the global network. If you wish to use Ngrok, enter your Ngrok auth token in the input section below and click \"Submit.\" Instructions on obtaining the auth token will be provided."
+    },
+    "password": {
+        "stepName": "Configure Password",
+        "buttonName": "Set experimenter password",
+        "type": "input",
+        "description": "Experimenter Password is optional but you can set this for securing your experiments."
+    },
+    "installProject": {
+        "stepName": "Install Project",
+        "buttonName": "Install Project Dependencies",
+        "type": "install",
+        "description": "Click the \"Install Dependencies\" button below to install all necessary backend and frontend dependencies for the project. You can click to expand and see logs of the installation process."
+    },
+    "launcher": {
+        "stepName": "Launcher",
+        "buttonName": "Launch",
+        "type": "launch",
+        "description": "This step verifies if Python (version >3.10.3 and <3.12) is installed on your computer. Python is crucial for this application. Click the \"Test\" button below. If not detected, installation instructions will be provided."
+    }
+}

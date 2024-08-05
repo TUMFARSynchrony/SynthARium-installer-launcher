@@ -1,0 +1,17 @@
+{
+  "name": "syntharium-installer-launcher",
+  "version": "0.0.1",
+  "description": "An installer application for TUMFARSynchrony syntharium project.",
+  "license": "MIT",
+  "author": {
+    "name": "SynthARium installer launcher developers",
+    "email": "ge42fog@mytum.de",
+    "url": "https://github.com/TUMFARSynchrony/SynthARium-installer-launcher"
+  },
+  "main": "./dist/main/main.js",
+  "scripts": {
+    "rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
+    "postinstall": "npm run rebuild && npm run link-modules",
+    "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
+  }
+}
