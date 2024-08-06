@@ -163,7 +163,9 @@ autoUpdater.on('download-progress', (progressObj) => {
 
 autoUpdater.on('update-downloaded', (info) => {
   console.log('info', info);
-  sendStatusToWindow('Update downloaded');
+  sendStatusToWindow(
+    'Update downloaded. Please quit from application and launch again.',
+  );
 });
 
 app.on('window-all-closed', () => {
