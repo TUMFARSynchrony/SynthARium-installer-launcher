@@ -2,7 +2,7 @@ function Footer() {
   return (
     <div className="mt-2 mb-1 grid grid-cols-3 gap-10 px-4 static bottom-0">
       <div className="font-montserrat rounded-lg border p-4 text-center shadow">
-        Version 0.0.4
+        Version 0.0.5
       </div>
       <div className="font-montserrat rounded-lg border p-4 text-center shadow">
         TUMFarSynchrony

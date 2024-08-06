@@ -5,8 +5,10 @@ import { IAutoUpdaterProps } from '../interfaces/props';
 export default function AutoUpdater(props: IAutoUpdaterProps) {
   const [value, setValue] = useState('');
   useEffect(() => {
+    // eslint-disable-next-line react/destructuring-assignment
     setValue(value + props.logs);
-  }, [props, value]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props]);
 
   return (
     <>

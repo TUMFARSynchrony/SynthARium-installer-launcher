@@ -259,6 +259,7 @@ function Installer() {
       setContents(contents);
       setIsPageLoading(false);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateAvailable, autoUpdateLogs]);
   if (updateAvailable) {
     return (
