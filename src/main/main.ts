@@ -166,7 +166,7 @@ autoUpdater.on('update-downloaded', (info) => {
   sendStatusToWindow(
     'Update downloaded. Please quit from application and launch again.',
   );
-  autoUpdater.quitAndInstall()
+  autoUpdater.quitAndInstall();
 });
 
 app.on('window-all-closed', () => {
