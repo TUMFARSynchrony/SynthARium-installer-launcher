@@ -260,7 +260,7 @@ function Installer() {
       setIsPageLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateAvailable, autoUpdateLogs]);
+  }, []);
   if (updateAvailable) {
     return (
       <div className="flex h-screen flex-col justify-normal">
