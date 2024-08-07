@@ -78,7 +78,7 @@ export const stepsInstall = async (service: string, payload: string) => {
     );
     if (operationResult.err) {
       operationResult = await runSyncLiveShellCommand(
-        `git clone https://github.com/TUMFARSynchrony/experimental-hub.git "${path}/repo" && cd "${path}/repo" && git checkout development-without-dlib`,
+        `git clone https://github.com/TUMFARSynchrony/SynthARium.git "${path}/repo" && cd "${path}/repo" && git checkout development-without-dlib`,
         (error: string, message: string) => {
           const newMessage = message || '';
           mainWindow?.webContents.send('syntharium', {
@@ -119,7 +119,7 @@ export const stepsInstall = async (service: string, payload: string) => {
     if (!operationResult.err) {
       mainWindow?.webContents.send('syntharium', {
         topic: topics.liveLog,
-        data: { logs: 'Experimental-hub is successfully downloaded.\n' },
+        data: { logs: 'SynthARium is successfully downloaded.\n' },
       });
 
       const backendPath = createFolderIfNotExist('repo/backend');
@@ -198,7 +198,7 @@ export const stepsInstall = async (service: string, payload: string) => {
     } else {
       mainWindow?.webContents.send('syntharium', {
         topic: topics.liveLog,
-        data: { logs: 'Unable to download Experimental-hub.\n' },
+        data: { logs: 'Unable to download SynthARium.\n' },
       });
     }
   }

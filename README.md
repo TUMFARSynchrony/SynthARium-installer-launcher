@@ -1,6 +1,6 @@
 # SynthARium Installer Launcher
 
-Our [experimental hub](https://github.com/TUMFARSynchrony/experimental-hub/) is video conferencing platform that can be used by researchers to host their own custom online synchrony experiments. The experimental hub consists of 3 main pages: Session Overview, Experiment Page, and Post Processing room as outlined below.
+Our [experimental hub](https://github.com/TUMFARSynchrony/SynthARium/) is video conferencing platform that can be used by researchers to host their own custom online synchrony experiments. The experimental hub consists of 3 main pages: Session Overview, Experiment Page, and Post Processing room as outlined below.
 
 ## Installer
 
