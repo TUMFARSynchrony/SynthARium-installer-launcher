@@ -9,4 +9,6 @@ const runTimeMemory: IConfigs = {
   isProjectInstalled: null,
 };
 
+export const DOCKER_IMAGE = 'hhuseyinkacmaz/test2';
+
 export default runTimeMemory;

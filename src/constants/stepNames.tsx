@@ -6,6 +6,6 @@ export enum stepNames {
   ngrok = 'ngrok',
   openAi = 'openAi',
   openFace = 'openFace',
-  password = 'password',
+  experimenterPassword = 'experimenterPassword',
   installProject = 'installProject',
 }

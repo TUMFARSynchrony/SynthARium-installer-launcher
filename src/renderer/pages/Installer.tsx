@@ -153,22 +153,24 @@ function Installer() {
         setStep(stepNames.openAi);
       },
       nextButtonClick: () => {
-        setStep(stepNames.password);
+        setStep(stepNames.experimenterPassword);
       },
       status: false,
       testResult: false,
       msg: '',
+      liveLog: true,
     },
-    [stepNames.password]: {
-      name: sectionDescription[stepNames.password].stepName,
-      description: sectionDescription[stepNames.password].description,
-      buttonName: sectionDescription[stepNames.password].buttonName,
-      type: sectionDescription[stepNames.password].type,
-      onClick: () => {
-        sendInstallCommand(stepNames.password);
+    [stepNames.experimenterPassword]: {
+      name: sectionDescription[stepNames.experimenterPassword].stepName,
+      description:
+        sectionDescription[stepNames.experimenterPassword].description,
+      buttonName: sectionDescription[stepNames.experimenterPassword].buttonName,
+      type: sectionDescription[stepNames.experimenterPassword].type,
+      onClick: (token: string) => {
+        sendInstallCommand(stepNames.experimenterPassword, token);
       },
       testButtonClick: () => {
-        sendTestCommand(stepNames.password);
+        sendTestCommand(stepNames.experimenterPassword);
       },
       prevButtonClick: () => {
         setStep(stepNames.ngrok);
@@ -193,7 +195,7 @@ function Installer() {
         sendTestCommand(stepNames.installProject);
       },
       prevButtonClick: () => {
-        setStep(stepNames.password);
+        setStep(stepNames.experimenterPassword);
       },
       nextButtonClick: () => {
         setStep(stepNames.installProject);
@@ -239,6 +241,10 @@ function Installer() {
             if (convertedMessage.data[service].openAi) {
               contents[stepNames.openAi].msg =
                 convertedMessage.data[service].openAi;
+            }
+            if (convertedMessage.data[service].experimenterPassword) {
+              contents[stepNames.experimenterPassword].msg =
+                convertedMessage.data[service].experimenterPassword;
             }
           } else if (service !== 'msg') {
             contents[service as stepNames].status =

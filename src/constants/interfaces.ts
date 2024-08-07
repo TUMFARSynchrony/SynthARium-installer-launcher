@@ -10,6 +10,7 @@ export enum ConfigKeys {
   pythonVersion = 'pythonVersion',
   ngrokAuthToken = 'ngrokAuthToken',
   openAiToken = 'openAiToken',
+  experimenterPassword = 'experimenterPassword',
   hostUrl = 'hostUrl',
   runWithNgrok = 'runWithNgrok',
   isProjectInstalled = 'isProjectInstalled',
@@ -21,6 +22,7 @@ export interface IConfigs {
   [ConfigKeys.ngrokAuthToken]?: string | null;
   [ConfigKeys.runWithNgrok]?: string | null;
   [ConfigKeys.openAiToken]?: string | null;
+  [ConfigKeys.experimenterPassword]?: string | null;
   [ConfigKeys.hostUrl]?: string | null;
   [ConfigKeys.isProjectInstalled]?: string | null;
 }
@@ -29,6 +31,7 @@ export interface ILaunchCommand {
   enableOpenFace?: boolean;
   enableNgrok?: boolean;
   enableOpenAi?: boolean;
+  enableExperimenterPassword?: boolean;
 }
 
 export interface IResult {

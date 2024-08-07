@@ -35,7 +35,7 @@
         "type": "install",
         "description": "OpenFace is optional but useful for exposing your local application to the global network. If you wish to use Ngrok, enter your Ngrok auth token in the input section below and click \"Submit.\" Instructions on obtaining the auth token will be provided."
     },
-    "password": {
+    "experimenterPassword": {
         "stepName": "Configure Password",
         "buttonName": "Set experimenter password",
         "type": "input",

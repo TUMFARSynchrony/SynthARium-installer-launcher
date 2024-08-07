@@ -17,7 +17,7 @@ export const stepsTest = async (service: string) => {
     operationResult = { err: null };
   } else if (service === stepNames.openFace) {
     operationResult = { err: null };
-  } else if (service === stepNames.password) {
+  } else if (service === stepNames.experimenterPassword) {
     operationResult = { err: null };
   } else if (service === stepNames.installProject) {
     operationResult = { err: null };

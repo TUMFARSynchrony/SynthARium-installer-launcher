@@ -4,6 +4,7 @@ import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import dotenv from 'dotenv';
+import kill from 'tree-kill';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './utils';
 import topics from '../constants/topics';
@@ -11,9 +12,10 @@ import {
   initializeAndReadConfigFile,
   initializeAppDataPath,
 } from './helpers/appData';
-import { IResult } from '../constants/interfaces';
+import { ConfigKeys, IResult } from '../constants/interfaces';
 // eslint-disable-next-line import/no-cycle
 import { handleMessage } from './handle.message';
+import runTimeMemory from './helpers/runTimeMemory';
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -109,13 +111,6 @@ const createWindow = async () => {
   });
 
   // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  // new AppUpdater();
-  // Object.defineProperty(app, 'isPackaged', {
-  //   get() {
-  //     return true;
-  //   },
-  // });
   log.transports.file.level = 'info';
   autoUpdater.logger = log;
   // autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml');
@@ -169,9 +164,28 @@ autoUpdater.on('update-downloaded', (info) => {
   autoUpdater.quitAndInstall();
 });
 
+app.on('will-quit', () => {
+  try {
+    if (runTimeMemory[ConfigKeys.hubProcessId]) {
+      kill(runTimeMemory[ConfigKeys.hubProcessId]);
+      runTimeMemory[ConfigKeys.hubProcessId] = 0;
+    }
+  } catch (e) {
+    console.error('Unable to kill the process', e);
+  }
+});
+
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
+  try {
+    if (runTimeMemory[ConfigKeys.hubProcessId]) {
+      kill(runTimeMemory[ConfigKeys.hubProcessId]);
+      runTimeMemory[ConfigKeys.hubProcessId] = 0;
+    }
+  } catch (e) {
+    console.error('Unable to kill the process', e);
+  }
   if (process.platform !== 'darwin') {
     app.quit();
   }

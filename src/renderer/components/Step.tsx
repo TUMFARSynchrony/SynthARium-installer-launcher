@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-nested-ternary */
 import { IStepProps } from '../interfaces/props';
 
@@ -6,6 +8,7 @@ function Step(props: IStepProps) {
   return (
     <div
       className={`flex justify-between font-montserrat border-gray-50 px-4 py-2 pr-0 content-center text-black shadow hover:bg-slate-100 ${isOperationLoading} ? 'cursor-not-allowed' : 'cursor-pointer'`}
+      onClick={onClick}
     >
       <div>
         <button

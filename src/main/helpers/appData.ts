@@ -52,6 +52,9 @@ export const initializeAndReadConfigFile = () => {
     runTimeMemory[ConfigKeys.openAiToken] = configs[ConfigKeys.openAiToken];
     runTimeMemory[ConfigKeys.isProjectInstalled] =
       configs[ConfigKeys.isProjectInstalled];
+    runTimeMemory[ConfigKeys.experimenterPassword] =
+      configs[ConfigKeys.experimenterPassword];
+
     console.log(
       '[INFO] App initialized with the following configs:',
       runTimeMemory,

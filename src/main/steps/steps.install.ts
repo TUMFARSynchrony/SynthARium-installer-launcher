@@ -10,8 +10,10 @@ import runTimeMemory from '../helpers/runTimeMemory';
 import { mainWindow } from '../main';
 import {
   findPythonVersion,
+  installDockerDependencies,
   runShellCommandSync,
   runSyncLiveShellCommand,
+  setExperimenterPassword,
   setNgrokAuthToken,
   setOpenAiAuthToken,
   venvActivation,
@@ -40,10 +42,33 @@ export const stepsInstall = async (service: string, payload: string) => {
           : 'OpenAI authentication token is successfully saved.',
       },
     });
+  } else if (service === stepNames.experimenterPassword) {
+    operationResult = setExperimenterPassword(payload);
+    mainWindow?.webContents.send('syntharium', {
+      topic: topics.liveLog,
+      data: {
+        configurationLog: operationResult.err
+          ? `Unable to set experimenter password because of the following error: ${operationResult.err}`
+          : 'Experimenter password is successfully saved.',
+      },
+    });
   } else if (service === stepNames.openFace) {
-    operationResult = { message: 'OK' };
-  } else if (service === stepNames.password) {
-    operationResult = { message: 'OK' };
+    operationResult = await installDockerDependencies((message: string) => {
+      mainWindow?.webContents.send('syntharium', {
+        topic: topics.liveLog,
+        data: {
+          logs: message,
+        },
+      });
+    });
+    mainWindow?.webContents.send('syntharium', {
+      topic: topics.liveLog,
+      data: {
+        logs: operationResult.err
+          ? `Unable to configure open face due to following error: ${operationResult.err}\n`
+          : 'Openface successfully configured.\n',
+      },
+    });
   } else if (service === stepNames.installProject) {
     runTimeMemory[ConfigKeys.isProjectInstalled] = 'false';
     upsertConfigToConfigFile(ConfigKeys.isProjectInstalled, 'false');
@@ -64,6 +89,10 @@ export const stepsInstall = async (service: string, payload: string) => {
         { exitCodeShouldBe0: true },
       );
     } else {
+      if (operationResult.message?.match(/changes not staged for commit/i)) {
+        await runShellCommandSync(`cd "${path}/repo/" && git checkout -- *`);
+      }
+
       const repoVersion = await runShellCommandSync(
         `cd "${path}/repo" && git fetch origin && git status`,
       );

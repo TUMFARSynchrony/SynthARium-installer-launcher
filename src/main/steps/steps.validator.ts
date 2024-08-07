@@ -1,5 +1,6 @@
 import { IGenericMessage } from '../../constants/interfaces';
 import { stepNames } from '../../constants/stepNames';
+import { DOCKER_IMAGE } from '../helpers/runTimeMemory';
 import { findPythonVersion, runShellCommandSync } from '../utils';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -29,6 +30,15 @@ export const stepsValidator = async (
       operationResult.message = `Success ${operationResult.message} meets the requirements!.`;
     } else {
       operationResult.err = `Git could not found. Please download Git from the following link: https://git-scm.com/downloads`;
+    }
+  } else if (service === stepNames.openFace) {
+    operationResult = await runShellCommandSync(
+      `docker image inspect ${DOCKER_IMAGE}`,
+    );
+    if (JSON.parse(operationResult.message || '[]').length) {
+      operationResult.message = `Success ${operationResult.message} meets the requirements!.`;
+    } else {
+      operationResult.err = `Docker image could not found. Please download docker from the following link: https://www.docker.com/products/docker-desktop/`;
     }
   }
   return operationResult;

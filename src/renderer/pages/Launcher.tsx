@@ -22,16 +22,20 @@ export default function Launcher() {
   const [useOpenface, setUseOpenFace] = useState(false);
   const [useOpenAi, setUseOpenAi] = useState(false);
   const [useNgrok, setUseNgrok] = useState(false);
+  const [useExperimenterPassword, setUseExperimenterPassword] = useState(false);
   const [hostUrl, setHostUrl] = useState('');
   const [ngrokStatus, setNgrokStatus] = useState(false);
   const [chatgptStatus, setChatgptStatus] = useState(false);
   const [openfaceStatus, setOpenfaceStatus] = useState(false);
+  const [experimenterPasswordStatus, setExperimenterPasswordStatus] =
+    useState(false);
 
   const sendLaunchCommand = () => {
     const options = {
       enableOpenFace: useOpenface,
       enableNgrok: useNgrok,
       enableOpenAi: useOpenAi,
+      enableExperimenterPassword: useExperimenterPassword,
     };
     ipcRenderer.sendMessage(
       'syntharium',
@@ -68,6 +72,9 @@ export default function Launcher() {
         setNgrokStatus(convertedMessage.data.ngrok);
         setOpenfaceStatus(convertedMessage.data.openface);
         setChatgptStatus(convertedMessage.data.chatgpt);
+        setExperimenterPasswordStatus(
+          convertedMessage.data.experimenterPassword,
+        );
         setIsProjectLive(convertedMessage.data.isProjectLive);
         if (convertedMessage.data.hostUrl) {
           setHostUrl(convertedMessage.data.hostUrl);
@@ -118,53 +125,85 @@ export default function Launcher() {
             <h1 className="text-2xl font-bold mb-4">Launcher Page</h1>
           </div>
           <div className="">
-            <div className="mb-4">
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  className="form-checkbox"
-                  checked={useOpenface}
-                  disabled={
-                    !!(isOperationLoading || isProjectLive || !openfaceStatus)
-                  }
-                  onChange={() => {
-                    setUseOpenFace(!useOpenface);
-                  }}
-                />
-                <span className="ml-2">Enable OpenFace</span>
-              </label>
-            </div>
-            <div className="mb-4">
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  className="form-checkbox"
-                  checked={useOpenAi}
-                  disabled={
-                    !!(isOperationLoading || isProjectLive || !chatgptStatus)
-                  }
-                  onChange={() => {
-                    setUseOpenAi(!useOpenAi);
-                  }}
-                />
-                <span className="ml-2">Enable ChatGPT</span>
-              </label>
-            </div>
-            <div className="mb-4">
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  className="form-checkbox"
-                  checked={useNgrok}
-                  disabled={
-                    !!(isOperationLoading || isProjectLive || !ngrokStatus)
-                  }
-                  onChange={() => {
-                    setUseNgrok(!useNgrok);
-                  }}
-                />
-                <span className="ml-2">Enable ngrok</span>
-              </label>
+            <div className="flex flex-col items-center justify-center">
+              <div className="text-left">
+                <div className="mb-4">
+                  <label className="inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox"
+                      checked={useOpenface}
+                      disabled={
+                        !!(
+                          isOperationLoading ||
+                          isProjectLive ||
+                          !openfaceStatus
+                        )
+                      }
+                      onChange={() => {
+                        setUseOpenFace(!useOpenface);
+                      }}
+                    />
+                    <span className="ml-2">Enable OpenFace</span>
+                  </label>
+                </div>
+                <div className="mb-4">
+                  <label className="inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox"
+                      checked={useOpenAi}
+                      disabled={
+                        !!(
+                          isOperationLoading ||
+                          isProjectLive ||
+                          !chatgptStatus
+                        )
+                      }
+                      onChange={() => {
+                        setUseOpenAi(!useOpenAi);
+                      }}
+                    />
+                    <span className="ml-2">Enable ChatGPT</span>
+                  </label>
+                </div>
+                <div className="mb-4">
+                  <label className="inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox"
+                      checked={useNgrok}
+                      disabled={
+                        !!(isOperationLoading || isProjectLive || !ngrokStatus)
+                      }
+                      onChange={() => {
+                        setUseNgrok(!useNgrok);
+                      }}
+                    />
+                    <span className="ml-2">Enable ngrok</span>
+                  </label>
+                </div>
+                <div className="mb-4">
+                  <label className="inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox"
+                      checked={useExperimenterPassword}
+                      disabled={
+                        !!(
+                          isOperationLoading ||
+                          isProjectLive ||
+                          !experimenterPasswordStatus
+                        )
+                      }
+                      onChange={() => {
+                        setUseExperimenterPassword(!useExperimenterPassword);
+                      }}
+                    />
+                    <span className="ml-2">Use experimenter password</span>
+                  </label>
+                </div>
+              </div>
             </div>
             {showLogs ? (
               <OutputLog

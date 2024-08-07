@@ -8,7 +8,7 @@ import OpenAI from 'openai';
 import os from 'os';
 import fs from 'fs';
 import { authtoken, connect } from 'ngrok';
-import runTimeMemory from '../helpers/runTimeMemory';
+import runTimeMemory, { DOCKER_IMAGE } from '../helpers/runTimeMemory';
 import { ConfigKeys, IGenericMessage } from '../../constants/interfaces';
 import { getAppPath, upsertConfigToConfigFile } from '../helpers/appData';
 import downloadNgrok from './download';
@@ -130,6 +130,59 @@ export const setOpenAiAuthToken = async (
   }
 };
 
+export const setExperimenterPassword = (token: string): IGenericMessage => {
+  try {
+    upsertConfigToConfigFile(ConfigKeys.experimenterPassword, token);
+    return {
+      message: 'Experimenter password successfully saved.',
+    };
+  } catch (e) {
+    return {
+      err: e,
+    };
+  }
+};
+
+export const installDockerDependencies = async (
+  next: any,
+): Promise<IGenericMessage> => {
+  let operationResult: IGenericMessage = {};
+  next('Checking for docker installation in your computer.\n');
+  operationResult = await runShellCommandSync('docker --version');
+  if (operationResult.err) {
+    next(
+      'Unable to find docker in your computer. Please check your installation and make sure you added docker to your environment variables.\n',
+    );
+    return operationResult;
+  }
+  next('Checking for docker image in your computer.\n');
+  operationResult = await runShellCommandSync(
+    `docker image inspect ${DOCKER_IMAGE}`,
+  );
+  if (!JSON.parse(operationResult.message || '[]').length) {
+    next(
+      'Unable to find the open face docker image. Now, the installation operation is starting. It will take some time.\n',
+    );
+    operationResult = await runSyncLiveShellCommand(
+      `docker pull ${DOCKER_IMAGE}`,
+      (error: string, message: string) => {
+        next(error || message);
+      },
+      { exitCodeShouldBe0: true },
+    );
+    if (operationResult.err) {
+      next(
+        `Unable to find pull the open face docker image. Error is: ${operationResult.err}\n`,
+      );
+    } else {
+      next('Image successfully downloaded.\n');
+    }
+  } else {
+    next('Requested open face docker image exists in your computer.\n');
+  }
+  return operationResult;
+};
+
 export function resolveHtmlPath(htmlFileName: string) {
   if (process.env.NODE_ENV === 'development') {
     const port = process.env.PORT || 1212;
@@ -151,6 +204,9 @@ export const runShellCommandSync = async (
       });
       childProcess.stderr.on('data', (data) => {
         reject(data.toString());
+      });
+      childProcess.on('exit', (code) => {
+        resolve(code?.toString() || '');
       });
     });
   };

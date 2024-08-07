@@ -53,6 +53,10 @@ export const handleMessage = async (
     const projectStatus = {
       err: runTimeMemory[ConfigKeys.isProjectInstalled] !== 'true',
     };
+    const openFaceStatus = await stepsValidator(stepNames.openFace);
+    const experimenterPasswordStatus = {
+      err: !runTimeMemory[ConfigKeys.experimenterPassword],
+    };
 
     result.data = {
       python: !pythonStatus.err,
@@ -60,6 +64,8 @@ export const handleMessage = async (
       git: !gitStatus.err,
       ngrok: !ngrokStatus.err,
       openAi: !openAiStatus.err,
+      experimenterPassword: !experimenterPasswordStatus.err,
+      openFace: !openFaceStatus.err,
       installProject:
         !pythonStatus.err &&
         !nodeStatus.err &&
@@ -68,11 +74,12 @@ export const handleMessage = async (
       msg: {
         ngrok: runTimeMemory[ConfigKeys.ngrokAuthToken],
         openAi: runTimeMemory[ConfigKeys.openAiToken],
+        experimenterPassword: runTimeMemory[ConfigKeys.experimenterPassword],
       },
     };
     result.service = 'serviceStatuses';
   } else if (topic === topics.checkLauncherStatuses) {
-    result.data = stepsLauncherStatus();
+    result.data = await stepsLauncherStatus();
   }
   return result;
 };
