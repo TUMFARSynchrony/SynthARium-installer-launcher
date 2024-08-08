@@ -8,5 +8,5 @@ root.render(<App />);
 // calling IPC exposed from preload script
 window.electron.ipcRenderer.once('syntharium', (arg) => {
   // eslint-disable-next-line no-console
-  console.log('[INFO] IPCRenderer ran with following arguments:', arg);
+  console.log(`IPCRenderer ran with following arguments: ${arg}`);
 });

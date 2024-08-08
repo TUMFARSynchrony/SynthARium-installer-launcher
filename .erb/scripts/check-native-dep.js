@@ -26,7 +26,7 @@ if (dependencies) {
       const plural = filteredRootDependencies.length > 1;
       console.log(`
  ${chalk.whiteBright.bgYellow.bold(
-   '[INFO] Webpack does not work with native dependencies.',
+   'Webpack does not work with native dependencies.',
  )}
 ${chalk.bold(filteredRootDependencies.join(', '))} ${
         plural ? 'are native dependencies' : 'is a native dependency'

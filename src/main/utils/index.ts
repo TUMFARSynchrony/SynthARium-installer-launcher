@@ -35,7 +35,7 @@ export const downloadBinary = async (): Promise<string> => {
     join(binPath(), 'ngrok.exe'),
   ];
   if (binaryLocations.some((binaryPath: string) => fs.existsSync(binaryPath))) {
-    console.info('ngrok binary is already downloaded');
+    console.info('Ngrok binary is already downloaded');
     return '';
   }
   if (!fs.existsSync(binPath())) {
@@ -47,10 +47,9 @@ export const downloadBinary = async (): Promise<string> => {
     });
     return res;
   } catch (error: any) {
-    console.log(
-      `Can't update ngrok binary. The extension may not work correctly.`,
+    console.error(
+      `Can't download ngrok binary. The extension may not work correctly. Error: ${error}`,
     );
-    console.error(error);
     return error;
   }
 };
@@ -59,10 +58,11 @@ export const setNgrokAuthToken = async (
   token: string,
 ): Promise<IGenericMessage> => {
   try {
+    console.log('Trying to set the ngrok authentication token.');
     const downloadBinaryRes = await downloadBinary();
     if (downloadBinaryRes) {
       return {
-        err: `'Unable to download binary file of ngrok. ${downloadBinaryRes}'`,
+        err: `Unable to download binary file of ngrok. ${downloadBinaryRes}`,
       };
     }
     try {
@@ -73,17 +73,22 @@ export const setNgrokAuthToken = async (
       await connect({ addr: 8080, binPath });
       upsertConfigToConfigFile(ConfigKeys.ngrokAuthToken, token);
     } catch (e) {
+      const errMessage =
+        'Ngrok authentication token is wrong. Please check your token and ensure that no other ngrok client is running.';
+      console.error(errMessage);
       upsertConfigToConfigFile(ConfigKeys.ngrokAuthToken, '');
       return {
-        err: 'Ngrok authentication token is wrong. Please check and validate your token.',
+        err: errMessage,
       };
     }
+    const message = 'Ngrok authentication token is successfully saved.';
+    console.log(message);
     return {
-      message: 'Ngrok authentication token is successfully saved.',
+      message,
     };
   } catch (e) {
     upsertConfigToConfigFile(ConfigKeys.ngrokAuthToken, '');
-    console.log(`[ERROR] Error while initializing the ngrok credentials: ${e}`);
+    console.error(`Error while initializing the ngrok credentials: ${e}`);
     return {
       err: e,
     };
@@ -94,6 +99,7 @@ export const setOpenAiAuthToken = async (
   token: string,
 ): Promise<IGenericMessage> => {
   try {
+    console.log('Trying to set the OpenAI authentication token.');
     const openai = new OpenAI({
       apiKey: token,
       dangerouslyAllowBrowser: true,
@@ -109,36 +115,41 @@ export const setOpenAiAuthToken = async (
     };
 
     const result = await validKey();
-    console.log('result', result);
     if (!result) {
-      console.log(`[ERROR] Error while initializing the openAi credentials`);
+      console.error(`Auth token is not valid for OpenAI.`);
       return {
-        err: 'Auth token is not valid for openAi',
+        err: 'Auth token is not valid for OpenAI',
       };
     }
+    const message = 'OpenAi authentication successfully completed!';
+    console.log(message);
     upsertConfigToConfigFile(ConfigKeys.openAiToken, token);
     return {
-      message: 'OpenAi authentication successfully completed!',
+      message,
     };
   } catch (e) {
-    console.log(
-      `[ERROR] Error while initializing the openAi credentials: ${e}`,
-    );
+    const errMessage = `Error while initializing the OpenAI credentials: ${e}`;
+    console.error(errMessage);
+    upsertConfigToConfigFile(ConfigKeys.openAiToken, '');
     return {
-      err: e,
+      err: errMessage,
     };
   }
 };
 
 export const setExperimenterPassword = (token: string): IGenericMessage => {
   try {
+    const message = 'Experimenter password successfully saved.';
+    console.log(message);
     upsertConfigToConfigFile(ConfigKeys.experimenterPassword, token);
     return {
-      message: 'Experimenter password successfully saved.',
+      message,
     };
   } catch (e) {
+    const errMessage = `Error while setting the experimenter password: ${e}`;
+    console.error(errMessage);
     return {
-      err: e,
+      err: errMessage,
     };
   }
 };
@@ -166,7 +177,7 @@ export const installDockerDependencies = async (
     operationResult = await runSyncLiveShellCommand(
       `docker pull ${DOCKER_IMAGE}`,
       (error: string, message: string) => {
-        next(error || message);
+        next(error || message, false);
       },
       { exitCodeShouldBe0: true },
     );
@@ -196,6 +207,9 @@ export function resolveHtmlPath(htmlFileName: string) {
 export const runShellCommandSync = async (
   command: string,
 ): Promise<IGenericMessage> => {
+  console.log(
+    `runShellCommandSync has been called with the following command: ${command}`,
+  );
   const runCommand = async (innerCommand: string) => {
     return new Promise((resolve, reject) => {
       const childProcess = spawn(innerCommand, { shell: true });
@@ -211,11 +225,14 @@ export const runShellCommandSync = async (
     });
   };
   try {
+    const message = (await runCommand(command)) as string;
     return {
-      message: (await runCommand(command)) as string, // execSync(command, { shell: "/bin/bash" }).toString(),
+      message,
     };
   } catch (error) {
-    console.log(`[ERROR] Error while executing the shell command: ${error}`);
+    console.error(
+      `Error while executing runShellCommandSync with the following error: ${error}`,
+    );
     return {
       err: error,
     };
@@ -263,7 +280,7 @@ export const runSyncLiveShellCommand = (
     });
     childProcess.on('exit', (code) => {
       console.log(
-        `[INFO] Shell command execution finished with the following code: ${code}`,
+        `runSyncLiveShellCommand execution finished with the following code: ${code}`,
       );
       if (options.exitCodeShouldBe0 && code !== 0) {
         next(null, `operation finished with ${code}!\n`);
@@ -284,8 +301,12 @@ export const findPythonVersion = async () => {
   };
   let operationResult;
   if (runTimeMemory.pythonVersion) {
+    console.log(
+      `Python version is fetched from cache. version: ${runTimeMemory[ConfigKeys.pythonVersion]}`,
+    );
     return runTimeMemory.pythonVersion;
   }
+  console.log('Find python version is called.');
   operationResult = await runShellCommandSync('python3.10 --version');
   if (
     !operationResult.err &&
@@ -322,17 +343,5 @@ export const findPythonVersion = async () => {
     runTimeMemory.pythonVersion = 'python';
     return runTimeMemory.pythonVersion;
   }
+  console.error('Unable to find a python version.');
 };
-
-// import { exec, execSync } from 'child_process';
-// import sudo from 'sudo-prompt';
-
-// const options = {
-//   name: 'Electron',
-// };
-// export const runSudoShellCommand = async (command: string, next: any) => {
-//   sudo.exec(command, options, function (error, stdout) {
-//     if (error) next(error);
-//     next(null, stdout);
-//   });
-// };

@@ -28,7 +28,7 @@ export const stepsInstall = async (service: string, payload: string) => {
       topic: topics.liveLog,
       data: {
         configurationLog: operationResult.err
-          ? `Unable to set ngrok authentication token because of the following error: ${operationResult.err}`
+          ? `Unable to configure ngrok authentication because of the following error: ${operationResult.err}`
           : 'Ngrok authentication token is successfully saved.',
       },
     });
@@ -53,30 +53,46 @@ export const stepsInstall = async (service: string, payload: string) => {
       },
     });
   } else if (service === stepNames.openFace) {
-    operationResult = await installDockerDependencies((message: string) => {
-      mainWindow?.webContents.send('syntharium', {
-        topic: topics.liveLog,
-        data: {
-          logs: message,
-        },
-      });
-    });
+    operationResult = await installDockerDependencies(
+      (message: string, log?: boolean) => {
+        mainWindow?.webContents.send('syntharium', {
+          topic: topics.liveLog,
+          data: {
+            logs: message,
+          },
+        });
+        if (!log) {
+          console.log((message || '').replace(/\n/g, ''));
+        }
+      },
+    );
+    const message = operationResult.err
+      ? `Unable to configure open face due to following error: ${operationResult.err}\n`
+      : 'Openface successfully configured.\n';
+    if (operationResult.err) {
+      console.error(message);
+    } else {
+      console.log(message);
+    }
     mainWindow?.webContents.send('syntharium', {
       topic: topics.liveLog,
       data: {
-        logs: operationResult.err
-          ? `Unable to configure open face due to following error: ${operationResult.err}\n`
-          : 'Openface successfully configured.\n',
+        logs: message,
       },
     });
   } else if (service === stepNames.installProject) {
+    let msg;
     runTimeMemory[ConfigKeys.isProjectInstalled] = 'false';
     upsertConfigToConfigFile(ConfigKeys.isProjectInstalled, 'false');
     const path = createFolderIfNotExist('');
+    console.log('Checking the SynthARium repository.');
     operationResult = await runShellCommandSync(
       `cd "${path}/repo" && git status`,
     );
     if (operationResult.err) {
+      console.log(
+        'Repository could not found. It will be downloaded from git repository.',
+      );
       operationResult = await runSyncLiveShellCommand(
         `git clone https://github.com/TUMFARSynchrony/SynthARium.git "${path}/repo" && cd "${path}/repo" && git checkout development-without-dlib`,
         (error: string, message: string) => {
@@ -89,10 +105,12 @@ export const stepsInstall = async (service: string, payload: string) => {
         { exitCodeShouldBe0: true },
       );
     } else {
+      console.log('Repository is exist.');
       if (operationResult.message?.match(/changes not staged for commit/i)) {
+        console.log('The repository has changes. These will be removed.');
         await runShellCommandSync(`cd "${path}/repo/" && git checkout -- *`);
       }
-
+      console.log('Checking the changes in the remote repository in git.');
       const repoVersion = await runShellCommandSync(
         `cd "${path}/repo" && git fetch origin && git status`,
       );
@@ -100,10 +118,13 @@ export const stepsInstall = async (service: string, payload: string) => {
         repoVersion.message &&
         repoVersion.message.match(/your branch is behind/i)
       ) {
+        msg =
+          'There are updates in remote repository. Fetching the latest updates.';
+        console.log(msg);
         mainWindow?.webContents.send('syntharium', {
           topic: topics.liveLog,
           data: {
-            logs: 'Updating the experimental hub. Please take a while...\n',
+            logs: `${msg} Please wait, it will take a while...\n`,
           },
         });
         operationResult = await runShellCommandSync(
@@ -117,14 +138,16 @@ export const stepsInstall = async (service: string, payload: string) => {
     }
 
     if (!operationResult.err) {
+      msg = 'SynthARium repository is successfully downloaded.';
+      console.log(msg);
       mainWindow?.webContents.send('syntharium', {
         topic: topics.liveLog,
-        data: { logs: 'SynthARium is successfully downloaded.\n' },
+        data: { logs: `${msg}\n` },
       });
 
       const backendPath = createFolderIfNotExist('repo/backend');
       const pythonVersion = await findPythonVersion();
-
+      console.log('Installing the backend dependencies.');
       operationResult = await runSyncLiveShellCommand(
         `cd "${backendPath}" && ${pythonVersion} -m venv exp-hub-venv && ${venvActivation()} && ${pythonVersion} -m pip install -r requirements.txt`,
         (error: string, message: string) => {
@@ -138,13 +161,16 @@ export const stepsInstall = async (service: string, payload: string) => {
       );
 
       if (!operationResult.err) {
+        msg = 'Backend dependencies are successfully installed.';
+        console.log(msg);
         mainWindow?.webContents.send('syntharium', {
           topic: topics.liveLog,
-          data: { logs: 'Backend dependencies are successfully installed.\n' },
+          data: { logs: `${msg}\n` },
         });
 
         const frontendPath = createFolderIfNotExist('repo/frontend');
 
+        console.log('Installing the frontend dependencies.');
         operationResult = await runSyncLiveShellCommand(
           `cd "${frontendPath}" && npm install`,
           (error: string, message: string) => {
@@ -157,6 +183,8 @@ export const stepsInstall = async (service: string, payload: string) => {
           { exitCodeShouldBe0: true },
         );
         if (!operationResult.err) {
+          console.log('Frontend dependencies are successfully installed.');
+          console.log('Trying to build frontend repository.');
           operationResult = await runSyncLiveShellCommand(
             `cd "${frontendPath}" && npm run build`,
             (error: string, message: string) => {
@@ -169,36 +197,46 @@ export const stepsInstall = async (service: string, payload: string) => {
             { exitCodeShouldBe0: true },
           );
           if (!operationResult.err) {
+            msg = 'Frontend build is completed.';
+            console.log(msg);
             mainWindow?.webContents.send('syntharium', {
               topic: topics.liveLog,
               data: {
-                logs: 'Frontend dependencies are successfully installed.\n',
+                logs: `${msg}\n`,
               },
             });
             runTimeMemory[ConfigKeys.isProjectInstalled] = 'true';
             upsertConfigToConfigFile(ConfigKeys.isProjectInstalled, 'true');
           } else {
+            const errMessage = 'Unable to install frontend dependencies.';
+            console.error(errMessage);
             mainWindow?.webContents.send('syntharium', {
               topic: topics.liveLog,
-              data: { logs: 'Unable to install frontend dependencies.\n' },
+              data: { logs: `${errMessage}\n` },
             });
           }
         } else {
+          const errMessage = 'Unable to execute npm install command.';
+          console.error(errMessage);
           mainWindow?.webContents.send('syntharium', {
             topic: topics.liveLog,
-            data: { logs: 'Unable to execute npm install command.\n' },
+            data: { logs: `${errMessage}\n` },
           });
         }
       } else {
+        const errMessage = 'Unable to install backend dependencies.';
+        console.error(errMessage);
         mainWindow?.webContents.send('syntharium', {
           topic: topics.liveLog,
-          data: { logs: 'Unable to install backend dependencies.\n' },
+          data: { logs: `${errMessage}\n` },
         });
       }
     } else {
+      const errMessage = 'Unable to download SynthARium repository.';
+      console.error(errMessage);
       mainWindow?.webContents.send('syntharium', {
         topic: topics.liveLog,
-        data: { logs: 'Unable to download SynthARium.\n' },
+        data: { logs: `${errMessage}\n` },
       });
     }
   }

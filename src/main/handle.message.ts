@@ -21,7 +21,9 @@ export const handleMessage = async (
     data: null,
     msg: '',
   };
-
+  console.log(
+    `Trying to handle the incoming message (topic, service, message): (${topic}, ${service}, ${(message || '').replace(/./g, '*')})`,
+  );
   let operationResult: IGenericMessage = {};
 
   if (topic === topics.runValidatorCommand) {

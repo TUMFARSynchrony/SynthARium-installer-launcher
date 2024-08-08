@@ -7,6 +7,7 @@ import { findPythonVersion, runShellCommandSync } from '../utils';
 export const stepsValidator = async (
   service: string,
 ): Promise<IGenericMessage> => {
+  console.log(`Validate the incoming service: ${service}`);
   let operationResult: IGenericMessage = {};
   if (service === stepNames.python) {
     operationResult = await runShellCommandSync(

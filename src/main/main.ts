@@ -9,6 +9,7 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './utils';
 import topics from '../constants/topics';
 import {
+  getAppPath,
   initializeAndReadConfigFile,
   initializeAppDataPath,
 } from './helpers/appData';
@@ -111,8 +112,11 @@ const createWindow = async () => {
   });
 
   // Remove this if your app does not use auto updates
-  log.transports.file.level = 'info';
+  log.transports.file.level = 'silly';
+  log.transports.file.resolvePath = () =>
+    path.join(getAppPath(), 'logs/main.log');
   autoUpdater.logger = log;
+  Object.assign(console, log.functions);
   // autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml');
   autoUpdater.checkForUpdatesAndNotify();
 };
@@ -120,7 +124,7 @@ const createWindow = async () => {
  * Add event listeners...
  */
 function sendStatusToWindow(text: string, updateAvailable?: boolean) {
-  log.info(text);
+  console.log(text);
   mainWindow?.webContents.send('syntharium', {
     topic: topics.autoUpdater,
     data: {
@@ -134,18 +138,15 @@ autoUpdater.on('checking-for-update', () => {
   sendStatusToWindow('Checking for update...');
 });
 
-autoUpdater.on('update-available', (info) => {
-  console.log('info', info);
+autoUpdater.on('update-available', () => {
   sendStatusToWindow('Update available.', true);
 });
 
-autoUpdater.on('update-not-available', (info) => {
-  console.log('info', info);
+autoUpdater.on('update-not-available', () => {
   sendStatusToWindow('Update not available.', false);
 });
 
 autoUpdater.on('error', (err) => {
-  console.log('err', err);
   sendStatusToWindow(`Error in auto-updater. ${err}`);
 });
 
@@ -156,8 +157,7 @@ autoUpdater.on('download-progress', (progressObj) => {
   sendStatusToWindow(logMessage);
 });
 
-autoUpdater.on('update-downloaded', (info) => {
-  console.log('info', info);
+autoUpdater.on('update-downloaded', () => {
   sendStatusToWindow(
     'Update downloaded. Please quit from application and launch again.',
   );
@@ -171,7 +171,7 @@ app.on('will-quit', () => {
       runTimeMemory[ConfigKeys.hubProcessId] = 0;
     }
   } catch (e) {
-    console.error('Unable to kill the process', e);
+    console.error(`Unable to kill the process due to following error: ${e}`);
   }
 });
 
@@ -184,7 +184,7 @@ app.on('window-all-closed', () => {
       runTimeMemory[ConfigKeys.hubProcessId] = 0;
     }
   } catch (e) {
-    console.error('Unable to kill the process', e);
+    console.error(`Unable to kill the process due to following error: ${e}`);
   }
   if (process.platform !== 'darwin') {
     app.quit();

@@ -119,18 +119,18 @@ const downloadNgrok = (callback: any, options: any) => {
         });
       })
       .on('error', (error) => {
-        console.error('\nngrok - error downloading from URL', error);
+        console.error(`ngrok - error downloading from URL error: ${error}`);
         cb(error);
       });
 
     const outputStream = fs
       .createWriteStream(cacheUrl)
       .on('error', (e) => {
-        console.error('ngrok - error storing binary to local file', e);
+        console.error(`ngrok - error storing binary to local file error: ${e}`);
         cb(e);
       })
       .on('finish', () => {
-        console.error(`\nngrok - binary downloaded to ${cacheUrl}`);
+        console.log(`ngrok - binary downloaded to ${cacheUrl}`);
         extract(cb);
       });
 
@@ -156,7 +156,7 @@ const downloadNgrok = (callback: any, options: any) => {
         cb(null);
       })
       .catch((e) => {
-        console.error('ngrok - error unpacking binary', e);
+        console.error(`ngrok - error unpacking binary error: ${e}`);
         cb(e);
       });
   }
@@ -164,7 +164,7 @@ const downloadNgrok = (callback: any, options: any) => {
   function retry(err: any) {
     attempts++;
     if (err && attempts === maxAttempts) {
-      console.error('ngrok - install failed', err);
+      console.error(`ngrok - install failed error: ${err}`);
       return callback(err);
     }
     if (err) {
