@@ -46,6 +46,26 @@ const configureRunTimeEnvironment = async (
       );
     }
   }
+  if (launchCommand.enableOpenAi && runTimeMemory[ConfigKeys.openAiToken]) {
+    try {
+      const filePath = path.join(directoryPath, '..', 'frontend', '.env');
+      const file = fs.readFileSync(filePath);
+      const fileStr = file
+        .toString()
+        .replace(
+          /ADD_YOUR_API_KEY_HERE/i,
+          runTimeMemory[ConfigKeys.openAiToken],
+        );
+      fs.writeFileSync(filePath, fileStr);
+      console.log(
+        'Repository is updated for launching with experimenter password.',
+      );
+    } catch (e) {
+      console.error(
+        `Unable to update the repository for experimenter password due to following error ${e}`,
+      );
+    }
+  }
   if (launchCommand.enableOpenFace) {
     const operationResult = await stepsValidator(stepNames.openFace);
     if (operationResult.message) {
