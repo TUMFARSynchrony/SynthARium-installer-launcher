@@ -10,6 +10,9 @@ import runTimeMemory from '../helpers/runTimeMemory';
 import { mainWindow } from '../main';
 import {
   findPythonVersion,
+  fixTorchVersionRequirements,
+  getArchitecture,
+  getOsPlatform,
   installDockerDependencies,
   runShellCommandSync,
   runSyncLiveShellCommand,
@@ -148,6 +151,9 @@ export const stepsInstall = async (service: string, payload: string) => {
       const backendPath = createFolderIfNotExist('repo/backend');
       const pythonVersion = await findPythonVersion();
       console.log('Installing the backend dependencies.');
+      if (getOsPlatform() === 'darwin' && getArchitecture() === 'x64') {
+        fixTorchVersionRequirements();
+      }
       operationResult = await runSyncLiveShellCommand(
         `cd "${backendPath}" && ${pythonVersion} -m venv exp-hub-venv && ${venvActivation()} && ${pythonVersion} -m pip install -r requirements.txt`,
         (error: string, message: string) => {

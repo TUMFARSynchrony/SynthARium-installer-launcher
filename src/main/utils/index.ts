@@ -264,6 +264,23 @@ export const venvActivation = () => {
   return 'source exp-hub-venv/bin/activate';
 };
 
+export const fixTorchVersionRequirements = () => {
+  try {
+    const backendPath = `${getAppPath()}/repo/backend`;
+    const filePath = path.join(backendPath, 'requirements.txt');
+    const file = fs.readFileSync(filePath);
+    const fileStr = file.toString().replace(/2\.3\.0/, '2.2.2');
+    fs.writeFileSync(filePath, fileStr);
+    console.log(
+      'Torch version in requirements is updated for installing the dependencies.',
+    );
+  } catch (e) {
+    console.error(
+      `Unable to update the torch version in requirements due to following error ${e}`,
+    );
+  }
+};
+
 export const runSyncLiveShellCommand = (
   command: string,
   next: any,
