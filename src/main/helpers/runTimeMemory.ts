@@ -10,5 +10,7 @@ const runTimeMemory: IConfigs = {
 };
 
 export const DOCKER_IMAGE = 'hhuseyinkacmaz/test2';
+export const GITHUB_URL = 'https://github.com/TUMFARSynchrony/SynthARium.git';
+export const GITHUB_BRANCH = 'development-without-dlib';
 
 export default runTimeMemory;

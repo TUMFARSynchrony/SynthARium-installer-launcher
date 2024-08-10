@@ -16,6 +16,7 @@ export default function Launcher() {
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [isOperationLoading, setIsOperationLoading] = useState(false);
   const [isProjectLive, setIsProjectLive] = useState(false);
+  const [isSetupTriggered, setIsSetupTriggered] = useState(false);
   const [logs, setLogs] = useState('');
   const [errorLog, setErrorLog] = useState('');
   const [showLogs, setShowLogs] = useState(true);
@@ -56,6 +57,10 @@ export default function Launcher() {
 
   useEffect(() => {
     const setup = () => {
+      if (isSetupTriggered) {
+        return;
+      }
+      setIsSetupTriggered(true);
       setIsPageLoading(true);
       ipcRenderer.sendMessage(
         'syntharium',
@@ -92,7 +97,6 @@ export default function Launcher() {
         } else if (convertedMessage.data.errorLog) {
           setIsOperationLoading(false);
           setIsProjectLive(false);
-          // eslint-disable-next-line no-alert
           setErrorLog(convertedMessage.data.errorLog);
         }
         if (convertedMessage.data.hostUrl) {

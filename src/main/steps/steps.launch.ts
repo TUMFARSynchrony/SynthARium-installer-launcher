@@ -6,8 +6,10 @@ import { getAppPath } from '../helpers/appData';
 import {
   binPath,
   findPythonVersion,
+  removeDockerContainers,
   runLiveShellCommand,
   runShellCommandSync,
+  runSyncLiveShellCommand,
   venvActivation,
 } from '../utils';
 import runTimeMemory from '../helpers/runTimeMemory';
@@ -37,6 +39,25 @@ const configureRunTimeEnvironment = async (
       fileJson.experimenter_password =
         runTimeMemory[ConfigKeys.experimenterPassword];
       fs.writeFileSync(filePath, JSON.stringify(fileJson));
+      const appJsPath = path.join(
+        directoryPath,
+        '..',
+        'frontend',
+        'src',
+        'App.js',
+      );
+      const appJsFile = fs.readFileSync(appJsPath);
+      const appJsStr = appJsFile
+        .toString()
+        .replace(
+          /\/\/experimenterPassword = prompt/i,
+          'experimenterPassword = prompt',
+        )
+        .replace(
+          /experimenterPassword = "no-pas/i,
+          '//experimenterPassword = "no-pas',
+        );
+      fs.writeFileSync(appJsPath, appJsStr);
       console.log(
         'Repository is updated for launching with experimenter password.',
       );
@@ -98,7 +119,8 @@ export const stepsLaunch = async (
 
   if (type === 'launch') {
     console.log('Launching the SynthARium application.');
-    const backendPath = `${getAppPath()}/repo/backend`;
+    const backendPath = path.join(getAppPath(), 'repo', 'backend');
+    const frontendPath = path.join(getAppPath(), 'repo', 'frontend');
     if (!fs.existsSync(backendPath)) {
       const errMessage = 'SynthARium repository does not exist.';
       console.error(errMessage);
@@ -107,6 +129,30 @@ export const stepsLaunch = async (
       };
     }
     await configureRunTimeEnvironment(backendPath, launchCommand);
+    const buildResult = await runSyncLiveShellCommand(
+      `cd "${frontendPath}" && npm run build`,
+      (error: string, buildMessage: string) => {
+        const newMessage = buildMessage || '';
+        mainWindow?.webContents.send('syntharium', {
+          topic: topics.liveLog,
+          data: { logs: newMessage },
+        });
+      },
+      { exitCodeShouldBe0: true },
+    );
+    if (buildResult.err) {
+      mainWindow?.webContents.send('syntharium', {
+        topic: topics.liveLog,
+        data: { logs: 'Unable to build frontend.\n' },
+      });
+      mainWindow?.webContents.send('syntharium', {
+        topic: topics.liveLog,
+        data: { serverStopped: true },
+      });
+      return {
+        err: buildResult.err,
+      };
+    }
     const hubProcess = runLiveShellCommand(
       `cd "${backendPath}" && ${venvActivation()} && ${await findPythonVersion()} "${backendPath}"/main.py`,
       async (error: any, data: any, exitStatus: any) => {
@@ -208,6 +254,7 @@ export const stepsLaunch = async (
     await runShellCommandSync(
       `cd "${getAppPath()}/repo/" && git checkout -- *`,
     );
+    await removeDockerContainers();
     console.log('Changes in the repository are restored.');
     mainWindow?.webContents.send('syntharium', {
       topic: topics.liveLog,

@@ -1,5 +1,6 @@
 import { app } from 'electron';
 import fs from 'fs';
+import path from 'path';
 import runTimeMemory from './runTimeMemory';
 import { ConfigKeys, IConfigs } from '../../constants/interfaces';
 
@@ -9,13 +10,13 @@ export const getAppPath = () => {
 };
 
 export const createFolderIfNotExist = (folderName: string): string | null => {
-  let path = `${getAppPath()}/${folderName}`;
-  path = path?.replace(/\/$/, '') || '';
+  let folderPath = path.join(getAppPath(), folderName);
+  folderPath = folderPath?.replace(/\/$/, '') || '';
   try {
-    if (!fs.existsSync(path)) {
-      fs.mkdirSync(path, { recursive: true });
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true });
     }
-    return path;
+    return folderPath;
   } catch (e) {
     console.error(
       `Initialize AppDataPath failed with the following error: ${e}`,
@@ -41,9 +42,8 @@ const createConfigFileIfNotExist = (filePath: string) => {
 
 export const initializeAndReadConfigFile = () => {
   try {
-    const path = createFolderIfNotExist('');
-    // eslint-disable-next-line prefer-template
-    const filePath = path + '/config.json';
+    const configPath = createFolderIfNotExist('');
+    const filePath = path.join(configPath || '', 'config.json');
     createConfigFileIfNotExist(filePath);
     const configString = fs.readFileSync(filePath).toString();
     const configs = JSON.parse(configString) as IConfigs;
@@ -68,9 +68,8 @@ export const upsertConfigToConfigFile = (key: string, value: string) => {
     return;
   }
   try {
-    const path = createFolderIfNotExist('');
-    // eslint-disable-next-line prefer-template
-    const filePath = path + '/config.json';
+    const configPath = createFolderIfNotExist('');
+    const filePath = path.join(configPath || '', 'config.json');
     createConfigFileIfNotExist(filePath);
     const configString = fs.readFileSync(filePath).toString();
     const configs = JSON.parse(configString);

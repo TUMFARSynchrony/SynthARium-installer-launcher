@@ -194,6 +194,24 @@ export const installDockerDependencies = async (
   return operationResult;
 };
 
+export const removeDockerContainers = async () => {
+  let operationResult = await runShellCommandSync(
+    'docker container ls --all --filter name="openface*"',
+  );
+  if (operationResult.err) {
+    return;
+  }
+  const runningContainers = (operationResult.message || '').match(
+    /openface-container-\d+/gim,
+  );
+  if (!runningContainers?.length) {
+    return;
+  }
+  operationResult = await runShellCommandSync(
+    `docker rm -f ${runningContainers.join(' ')}`,
+  );
+};
+
 export function resolveHtmlPath(htmlFileName: string) {
   if (process.env.NODE_ENV === 'development') {
     const port = process.env.PORT || 1212;

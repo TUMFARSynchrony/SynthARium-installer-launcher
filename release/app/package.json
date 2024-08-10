@@ -1,6 +1,6 @@
 {
   "name": "syntharium-installer-launcher",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "An installer application for TUMFARSynchrony syntharium project.",
   "license": "MIT",
   "author": {

@@ -5,7 +5,10 @@ import {
   createFolderIfNotExist,
   upsertConfigToConfigFile,
 } from '../helpers/appData';
-import runTimeMemory from '../helpers/runTimeMemory';
+import runTimeMemory, {
+  GITHUB_BRANCH,
+  GITHUB_URL,
+} from '../helpers/runTimeMemory';
 // eslint-disable-next-line import/no-cycle
 import { mainWindow } from '../main';
 import {
@@ -97,7 +100,7 @@ export const stepsInstall = async (service: string, payload: string) => {
         'Repository could not found. It will be downloaded from git repository.',
       );
       operationResult = await runSyncLiveShellCommand(
-        `git clone https://github.com/TUMFARSynchrony/SynthARium.git "${path}/repo" && cd "${path}/repo" && git checkout development-without-dlib`,
+        `git clone ${GITHUB_URL} "${path}/repo" && cd "${path}/repo" && git checkout ${GITHUB_BRANCH}`,
         (error: string, message: string) => {
           const newMessage = message || '';
           mainWindow?.webContents.send('syntharium', {

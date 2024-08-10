@@ -10,6 +10,7 @@ function Installer() {
   const { ipcRenderer } = window.electron;
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [isOperationLoading, setIsOperationLoading] = useState(false);
+  const [isSetupTriggered, setIsSetupTriggered] = useState(false);
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [autoUpdateLogs, setAutoUpdateLogs] = useState('');
   const [step, setStep] = useState(stepNames.python);
@@ -213,6 +214,10 @@ function Installer() {
         return;
       }
       setIsPageLoading(true);
+      if (isSetupTriggered) {
+        return;
+      }
+      setIsSetupTriggered(true);
       ipcRenderer.sendMessage('syntharium', 'checkServiceStatuses', true);
     };
 
