@@ -8,7 +8,11 @@ function Step(props: IStepProps) {
   return (
     <div
       className={`flex justify-between font-montserrat border-gray-50 px-4 py-2 pr-0 content-center text-black shadow hover:bg-slate-100 ${isOperationLoading} ? 'cursor-not-allowed' : 'cursor-pointer'`}
-      onClick={onClick}
+      onClick={() => {
+        if (!isOperationLoading) {
+          onClick();
+        }
+      }}
     >
       <div>
         <button
