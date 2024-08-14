@@ -3,43 +3,43 @@
         "stepName": "Test Python",
         "buttonName": "Check Python Version",
         "type": "test",
-        "description": "This step verifies if Python (currently tested versions: version > 3.10.3 and < 3.12) is installed on your computer. Python is required for running the experimental hub's backend application. Click the \"Test\" button below. If not detected, installation instructions will be provided."
+        "description": "This step verifies if Python (currently tested versions: version > 3.10.3 and < 3.12) is installed on your computer. Python is required for running SynthARium's backend application. Click the \"Check Python Version\" button below. If python is not detected, please follow instructions to isntall it at this link: https://www.python.org/downloads/release/python-3114/ "
     },
     "node": {
         "stepName": "Test Node",
         "buttonName": "Check Node Version",
         "type": "test",
-        "description": "This step verifies if Node.js (currently tested versions are > v16.0.0) is installed on your computer. Node.js is required for running the experimental hub's frontend application. Click the \"Test\" button below. If not detected, installation instructions will be provided."
+        "description": "This step verifies if Node.js (currently tested versions are > v16.0.0) is installed on your computer. Node.js is required for running SynthARium's frontend application. Click the \"Check Node Version\" button below. If Node is not detected, please follow instructions to install it at this link: https://nodejs.org/en/blog/release/v18.12.0"
     },
     "git": {
         "stepName": "Test Git",
         "buttonName": "Check Git Version",
         "type": "test",
-        "description": "This step verifies if Git is installed on your computer. Git is crucial for cloning the project repository. Click the \"Test\" button below. If not detected, installation instructions will be provided."
+        "description": "This step verifies if Git is installed on your computer. Our installer uses Git to download the project and keep your SynthARium instance up-to-date with the latest changes and bug fixes. Click the \"Check Git Version\" button below. If Git is not detected, please follow instructions to install it at this link: https://git-scm.com/downloads."
     },
     "ngrok": {
         "stepName": "Configure Ngrok",
-        "buttonName": "Set ngrok token",
+        "buttonName": "Set ngrok Token",
         "type": "input",
-        "description": "Ngrok is optional but useful for exposing your local application to the global network. If you wish to use Ngrok, enter your Ngrok auth token in the input section below and click \"Submit.\" Instructions on obtaining the auth token will be provided."
+        "description": "ngrok is optional and for the purposes of using SynthARium free. If you want other's outside your network to be able to access and join your experiment without too much hassle and the use of 3rd party software and data privacy isn't a restriction for you, we recommend using ngrok. You can sign up for ngrok here: If you wish to use ngrok, enter your ngrok authentication token in the input section below and click \"Set ngrok Token.\" "
     },
     "openAi": {
-        "stepName": "Configure OpenAi",
-        "buttonName": "Set OpenAI token",
+        "stepName": "Configure ChatGPT",
+        "buttonName": "Set OpenAI Token",
         "type": "input",
-        "description": "Ngrok is optional but useful for exposing your local application to the global network. If you wish to use Ngrok, enter your Ngrok auth token in the input section below and click \"Submit.\" Instructions on obtaining the auth token will be provided."
+        "description": "If you wish to use OpenAI's ChatGPT feature in SynthARium, please enter your API key below. To sign up for a OpenAI key, visit their website: https://platform.openai.com/ and check their pricing: https://openai.com/api/pricing/ If you wish to use ChatGPT features for an experiment, enter your api authentecation token in the input section below and click \"Set OpenAI Token.\""
     },
     "openFace": {
         "stepName": "Configure OpenFace",
-        "buttonName": "Open Face",
+        "buttonName": "Install OpenFace",
         "type": "install",
-        "description": "OpenFace is optional but useful for exposing your local application to the global network. If you wish to use Ngrok, enter your Ngrok auth token in the input section below and click \"Submit.\" Instructions on obtaining the auth token will be provided."
+        "description": "If you wish to use OpenFace as a real-time analysis filter in SynthARium without the hassel of building the model yourself, we offer a easier alternative through Docker. You must already have Docker installed: https://www.docker.com/products/docker-desktop then click the \"Install OpenFace\" button below. \\ NOTE: Installation of OpenFace requires at least 2.1 GB of free space (including the Docker installation, manual OpenFace build requires at least 3.3GB). Furthermore, be sure that your computer has mid range performance otherwise enabling one or more instances of OpenFace will make your system struggle."
     },
     "experimenterPassword": {
         "stepName": "Configure Password",
-        "buttonName": "Set experimenter password",
+        "buttonName": "Set Experimenter Password",
         "type": "input",
-        "description": "Experimenter Password is optional but you can set this for securing your experiments."
+        "description": "Experimenter Password is optional but recommended. Although hardcoded, it is a preliminary measures we immplemented to stop misdirected participants or malicious actors from accessing your experiments and tampering with your experimental settings. Enter a custom password and click the \"Set Experimenter Password\". If you forget your password, just reset it here. \\ Note: Anyone with your experimenter password and the hosting link can be able to join as an experimenter, even to a currently ongoing session."
     },
     "installProject": {
         "stepName": "Install Project",
@@ -51,6 +51,6 @@
         "stepName": "Launcher",
         "buttonName": "Launch",
         "type": "launch",
-        "description": "This step verifies if Python (version >3.10.3 and <3.12) is installed on your computer. Python is crucial for this application. Click the \"Test\" button below. If not detected, installation instructions will be provided."
+        "description": "You have successfully installed the project and ready to go! You can come to this page anytime to launch or terminate the project. When ready, a link will apear and clicking on it opens the SynthARium project in your default browser.\\ For more information about project usage, checkout our wiki: https://github.com/TUMFARSynchrony/SynthARium/wiki/Usage"
     }
 }
