@@ -100,6 +100,7 @@
     "electron-log": "^4.4.8",
     "electron-updater": "^6.1.4",
     "fix-path": "^4.0.0",
+    "html-react-parser": "^5.1.12",
     "ngrok": "^5.0.0-beta.2",
     "openai": "^4.53.2",
     "react": "^18.2.0",

@@ -6,6 +6,7 @@
 /* eslint-disable prefer-template */
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import parse from 'html-react-parser';
 import OutputLog from './OutputLog';
 import topics from '../../constants/topics';
 import { IMessage } from '../interfaces/message';
@@ -140,7 +141,7 @@ function Contents(props: IContentsProps) {
               <h2 className="font-bold text-l">{name}</h2>
             </div>
             <div className="flex-grow">
-              <div className="mt-6 text-center">{description}</div>
+              <div className="mt-6 text-center">{parse(description)}</div>
               {type !== 'input'
                 ? renderInstallTestButton()
                 : renderInputSection()}
